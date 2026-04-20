@@ -71,9 +71,8 @@ export async function getUpdateLinks() {
   try {
     const snapshot = await adminDb.collection(COLLECTION).orderBy('createdAt', 'desc').get();
     const links: UpdateLink[] = snapshot.docs.map((d: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>) => {
-      const data = d.data() as UpdateLink;
-      const { id, ...rest } = data;
-      return { id: d.id, ...rest };
+      const data = d.data() as Omit<UpdateLink, 'id'>;
+      return { id: d.id, ...data };
     });
     return { links: JSON.parse(JSON.stringify(links)) };
   } catch {
@@ -81,11 +80,11 @@ export async function getUpdateLinks() {
   }
 }
 
-export async function getUpdateLinkById(id: string) {
+export async function getUpdateLinkById(documentId: string) {
   try {
-    const doc = await adminDb.collection(COLLECTION).doc(id).get();
+    const doc = await adminDb.collection(COLLECTION).doc(documentId).get();
     if (!doc.exists) return { error: 'الرابط غير موجود' };
-    const data = doc.data() as UpdateLink;
+    const data = doc.data() as Omit<UpdateLink, 'id'>;
     if (data.disabled) return { error: 'هذا الرابط معطل' };
     if (data.expiresAt <= Date.now()) return { error: 'انتهت صلاحية هذا الرابط' };
     return { link: { id: doc.id, ...data } };
