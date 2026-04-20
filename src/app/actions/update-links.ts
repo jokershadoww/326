@@ -72,7 +72,8 @@ export async function getUpdateLinks() {
     const snapshot = await adminDb.collection(COLLECTION).orderBy('createdAt', 'desc').get();
     const links: UpdateLink[] = snapshot.docs.map((d: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>) => {
       const data = d.data() as UpdateLink;
-      return { id: d.id, ...data };
+      const { id, ...rest } = data;
+      return { id: d.id, ...rest };
     });
     return { links: JSON.parse(JSON.stringify(links)) };
   } catch {
