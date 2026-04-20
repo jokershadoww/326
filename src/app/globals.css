@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-border: var(--border);
+}
+
+:root {
+  /* الوضع الداكن (الكحلي الغامق) كافتراضي */
+  --background: #0f172a; /* Slate 900 - كحلي غامق */
+  --foreground: #f8fafc; /* Slate 50 */
+  
+  --primary: #3b82f6; /* Blue 500 */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #1e293b; /* Slate 800 */
+  --secondary-foreground: #f1f5f9;
+
+  --border: #334155; /* Slate 700 */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-cairo), sans-serif;
+}
