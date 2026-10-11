@@ -98,10 +98,20 @@ export async function updateAdmin(prevState: any, formData: FormData) {
      revalidatePath('/super-admin');
      return { success: 'تم إنشاء حساب الأدمن بنجاح' };
    } catch (error: any) {
+     console.error('[createAdmin] Firebase error:', error?.code, error?.message);
      if (error?.code === 'auth/email-already-exists') {
        return { error: 'هذا البريد مسجل بالفعل' };
      }
-     return { error: 'حدث خطأ أثناء إنشاء حساب الأدمن' };
+     if (error?.code === 'auth/configuration-not-found') {
+       return { error: 'خدمة Firebase Auth غير مفعّلة في مشروع Firebase أو بيانات الاعتماد غير صحيحة.' };
+     }
+     if (error?.code === 'app/invalid-credential' || /credential/i.test(String(error?.message))) {
+       return { error: 'بيانات اعتماد Firebase Admin غير صحيحة — تحقق من ملف .env' };
+     }
+     if (String(error?.message || '').includes('not initialized')) {
+       return { error: 'Firebase Admin لم يُهيّأ — تأكد من وجود ملف .env ببيانات Service Account' };
+     }
+     return { error: `فشل إنشاء الحساب: ${error?.code || error?.message || 'خطأ غير معروف'}` };
    }
  }
  
@@ -118,8 +128,9 @@ export async function updateAdmin(prevState: any, formData: FormData) {
         disabled: !!u.disabled,
        }));
      return { users: JSON.parse(JSON.stringify(admins)) };
-   } catch (e) {
-     return { error: 'حدث خطأ أثناء جلب قائمة الأدمن' };
+   } catch (e: any) {
+     console.error('[listAdmins] Firebase error:', e?.code, e?.message);
+     return { error: `تعذّر جلب قائمة الأدمن: ${e?.code || e?.message || 'خطأ غير معروف'}` };
    }
  }
 
